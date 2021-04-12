@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <title>苏芒旅游网-我的收藏</title>
+        <link href="css/bootstrap.min.css" rel="stylesheet">
+        <link rel="stylesheet" type="text/css" href="css/common.css">
+        <link rel="stylesheet" href="css/index.css">
+       <style>
+           .tab-content .row>div {
+            margin-top: 16px;
+           } 
+           .tab-content {
+            margin-bottom: 36px;
+           }
+       </style>
+       <script src="js/jquery-3.3.1.js"></script>
+        <script src="js/getParameter.js"></script>
+        <script>
+            var uid = getParameter("uid");
+            $(function () {
+                load(uid,1);
+            })
+            function load(uid,currentPage) {
+
+                $.get("route/myFavorite",{uid:uid,currentPage:currentPage},function(pb) {
+                    var lis="";
+                    var list=pb.list;
+                    for(var i=0;i<list.length;i++){
+                       lis+='<div class="col-md-3">\n' +
+                           '                                    <a href="route_detail.html?rid='+list[i].rid+'">\n' +
+                           '                                        <img src="'+list[i].rimage+'" alt="">\n' +
+                           '                                        <div class="has_border">\n' +
+                           '                                            <h3>'+list[i].rname+'</h3>\n' +
+                           '                                            <div class="price">网付价<em>￥</em><strong>'+list[i].price+'</strong><em>起</em></div>\n' +
+                           '                                        </div>\n' +
+                           '                                    </a>\n' +
+                           '                                </div>'
+                    }
+                    $("#list").html(lis);
+
+                    //渲染分页组件
+                    var begin; // 开始位置
+                    var end ; //  结束位置
+                    if(pb.totalPage < 10){
+                        //总页码不够10页
+
+                        begin = 1;
+                        end = pb.totalPage;
+                    }else {
+                        begin = pb.currentPage - 5 ;
+                        end = pb.currentPage + 4 ;
+                        if (begin<1){
+                            begin=1;
+                            end=10;
+                        }
+                        if (end>pb.totalPage){
+                            end=pb.totalPage;
+                            begin=end-9;
+                        }
+                    }
+
+                    var lis_='<li onclick="javascript:load('+uid+',1,\'\')"><a href="javascript:void(0)">首页</a></li>\n' + '<li onclick="javascript:load('+uid+','+(pb.currentPage-1)+')" class="threeword"><a href="javascript:void(0)">上一页</a></li>';
+                    for (var i=begin;i<=end;i++){
+                        if(pb.currentPage == i){
+                            li = '<li class="curPage" onclick="javascript:load('+uid+','+i+',\'\')"><a href="javascript:void(0)">'+i+'</a></li>';
+                        }else{
+                            //创建页码的li
+                            li = '<li onclick="javascript:load('+uid+','+i+',\'\')"><a href="javascript:void(0)">'+i+'</a></li>';
+                        }
+                        lis_+=li;
+                    }
+                    lis_+=' <li onclick="load('+uid+','+(pb.currentPage+1)+',\'\')" class="threeword"><a href="javascript:void(0);">下一页</a></li>\n' +
+                        '                            <li onclick="load('+uid+','+pb.totalPage+',\'\')" class="threeword"><a href="javascript:void(0);">末页</a></li>';
+                    $("#page_").html(lis_);
+
+                    window.scrollTo(0,0);
+
+                },"json");
+
+            }
+        </script>
+    </head>
+    <body>
+    <!--引入头部-->
+    <div id="header"></div>
+         <!-- 排行榜 start-->
+        <section id="content">            
+            <section class="hemai_jx">
+                <div class="jx_top">
+                    <div class="jx_tit">
+                        <img src="images/icon_5.jpg" alt="">
+                        <span>我的收藏</span>
+                    </div>                    
+                </div>
+                <div class="jx_content">
+                    <!-- Tab panes -->
+                    <div class="tab-content">
+                        <div role="tabpanel" class="tab-pane active" id="home">
+                            <div class="row" id="list">
+
+                            </div>
+                        </div>                       
+                    </div>
+                </div>
+                <div class="pageNum">
+                    <ul id="page_">
+<!--                        <li><a href="">首页</a></li>-->
+<!--                        <li class="threeword"><a href="#">上一页</a></li>-->
+<!--                        <li><a href="#">1</a></li>-->
+<!--                        <li><a href="#">2</a></li>-->
+<!--                        <li><a href="#">3</a></li>-->
+<!--                        <li><a href="#">4</a></li>-->
+<!--                        <li><a href="#">5</a></li>-->
+<!--                        <li><a href="#">6</a></li>-->
+<!--                        <li><a href="#">7</a></li>-->
+<!--                        <li><a href="#">8</a></li>-->
+<!--                        <li><a href="#">9</a></li>-->
+<!--                        <li><a href="#">10</a></li>-->
+<!--                        <li class="threeword"><a href="javascript:;">下一页</a></li>-->
+<!--                        <li class="threeword"><a href="javascript:;">末页</a></li>-->
+                    </ul>
+                </div>
+            </section>                      
+        </section>
+        <!-- 排行榜 end-->
+    	
+         <!--引入尾部-->
+    	<div id="footer"></div>
+        <!--导入布局js，共享header和footer-->
+        <script type="text/javascript" src="js/include.js"></script>
+    </body>
+</html>
